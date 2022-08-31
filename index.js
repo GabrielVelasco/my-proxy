@@ -8,7 +8,10 @@ var host = process.env.HOST || '0.0.0.0';
 // Listen on a specific port via the PORT environment variable
 var port = process.env.PORT || 8080;
 
-app.use(cors());
+var corsOptions = {
+    origin: 'https://gabrielvelasco.github.io/BET-Attack-Momentum/',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
 async function getlivegames(req, res){
     const scurl = "https://api.sofascore.com/api/v1/sport/football/events/live";
@@ -18,7 +21,7 @@ async function getlivegames(req, res){
     res.send(dataFromSofaScore.data.events);
 }
 
-app.get("/livegames", getlivegames);
+app.get("/livegames", cors(corsOptions), getlivegames);
 
 // aways at the END!!!!!!
 app.get("/", (req, res) => { // generic url request
