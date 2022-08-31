@@ -3,6 +3,11 @@ const axios = require("axios");
 const cors = require("cors");
 const app = express(); // create Express app, returns express app w/ methods
 
+// Listen on a specific host via the HOST environment variable
+var host = process.env.HOST || '0.0.0.0';
+// Listen on a specific port via the PORT environment variable
+var port = process.env.PORT || 8080;
+
 app.use(cors());
 
 async function getlivegames(req, res){
@@ -21,7 +26,7 @@ app.get("/", (req, res) => { // generic url request
     res.send("my proxy API!");
 });
 
-app.listen(3000, () => {
+app.listen(port, host, () => {
 	// starts the server, add listener to the port 3000 (localhost)
-	console.log("listening at 3000!!!!!");
+	console.log('Running on ' + host + ':' + port);
 });
