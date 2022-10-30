@@ -12,7 +12,7 @@ app.use(cors());
 
 async function eleicoes(req, res){
     const url = "https://resultados.tse.jus.br/oficial/ele2022/545/dados-simplificados/br/br-c0001-e000545-r.json";
-    const dataFromTse = await axios.get(scurl);
+    const dataFromTse = await axios.get(url);
     
     // console.dir(dataFromSofaScore.data);
     res.send(dataFromTse.data);
@@ -20,7 +20,7 @@ async function eleicoes(req, res){
 
 async function getLiveGames(req, res){
     const url = "https://api.sofascore.com/api/v1/sport/football/events/live";
-    const dataFromSofaScore = await axios.get(scurl);
+    const dataFromSofaScore = await axios.get(url);
     
     res.send(dataFromSofaScore.data.events);
 }
