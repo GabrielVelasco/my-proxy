@@ -27,7 +27,7 @@ async function getLiveGames(req, res){
 
 app.get("/ele", eleicoes);
 
-app.get("/liveGames", getLiveGames);
+app.get("/livegames", getLiveGames);
 
 // aways at the END!!!!!!
 app.get("/", (req, res) => { // generic url request
