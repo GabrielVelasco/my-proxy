@@ -18,16 +18,7 @@ async function eleicoes(req, res){
     res.send(dataFromTse.data);
 }
 
-async function getLiveGames(req, res){
-    const url = "https://api.sofascore.com/api/v1/sport/football/events/live";
-    const dataFromSofaScore = await axios.get(url);
-    
-    res.send(dataFromSofaScore.data.events);
-}
-
 app.get("/ele", eleicoes);
-
-app.get("/livegames", getLiveGames);
 
 // aways at the END!!!!!!
 app.get("/", (req, res) => { // generic url request
