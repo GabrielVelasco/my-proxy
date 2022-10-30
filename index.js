@@ -11,14 +11,14 @@ var port = process.env.PORT || 8080;
 app.use(cors());
 
 async function getlivegames(req, res){
-    const scurl = "https://api.sofascore.com/api/v1/sport/football/events/live";
+    const scurl = "https://resultados.tse.jus.br/oficial/ele2022/545/dados-simplificados/br/br-c0001-e000545-r.json";
     const dataFromSofaScore = await axios.get(scurl);
     
-    // console.dir(dataFromSofaScore.data.events);
-    res.send(dataFromSofaScore.data.events);
+    // console.dir(dataFromSofaScore.data);
+    res.send(dataFromSofaScore.data);
 }
 
-app.get("/livegames", getlivegames);
+app.get("/ele", getlivegames);
 
 // aways at the END!!!!!!
 app.get("/", (req, res) => { // generic url request
