@@ -30,6 +30,12 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+.eslintrc
+.travis.yml
+Procfile
+package-lock.json
+.eslintignore
+
 # idea
 .idea
 
