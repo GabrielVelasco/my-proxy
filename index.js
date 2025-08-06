@@ -1,32 +1,74 @@
-const express = require("express");
-const axios = require("axios");
-const cors = require("cors");
-const app = express(); // create Express app, returns express app w/ methods
+const puppeteer = require('puppeteer');
+const express = require('express');
+const cors = require('cors');
+const app = express();
 
 // Listen on a specific host via the HOST environment variable
 var host = process.env.HOST || '0.0.0.0';
 // Listen on a specific port via the PORT environment variable
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 3000;
 
+// Enable CORS for all routes
 app.use(cors());
 
-async function eleicoes(req, res){
-    const url = "https://resultados.tse.jus.br/oficial/ele2022/545/dados-simplificados/br/br-c0001-e000545-r.json";
-    const dataFromTse = await axios.get(url);
-    
-    // console.dir(dataFromSofaScore.data);
-    res.send(dataFromTse.data);
-}
+let browserPromise, reqCount = 0;
 
-app.get("/ele", eleicoes);
+(async () => {
+    browserPromise = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+})();
 
-// aways at the END!!!!!!
-app.get("/", (req, res) => { // generic url request
-	
-    res.send("my proxy API!");
+app.get('/live-events', async (req, res) => {
+    reqCount += 1;
+
+    try {
+        // Open a new page
+        const page = await browserPromise.newPage();
+
+        // Navigate to the SofaScore live events API endpoint
+        const response = await page.goto(
+            'https://www.sofascore.com/api/v1/sport/football/events/live'
+        );
+
+        // Parse the JSON response
+        const data = await response.json();
+
+        res.json(data); // Use res.json() instead of res.send()
+
+        await page.close();
+
+    } catch (err) {
+        console.error('Error fetching SofaScore data:', err);
+        res.status(500).json({ error: 'Failed to fetch live events' });
+    }
 });
 
-app.listen(port, host, () => {
-	// starts the server, add listener to the port 3000 (localhost)
-	console.log('Running on ' + host + ':' + port);
+app.get('/live-stats/:matchID', async (req, res) => {
+    const matchID = req.params.matchID;
+
+    try {
+        // Open a new page
+        const page = await browserPromise.newPage();
+
+        // Navigate to the SofaScore live stats API endpoint
+        const response = await page.goto(
+            `https://www.sofascore.com/api/v1/event/${matchID}/statistics`
+        );
+
+        // Parse the JSON response
+        const data = await response.json();
+
+        res.json(data); // Use res.json() instead of res.send()
+
+        await page.close();
+
+    } catch (err) {
+        console.error('Error fetching SofaScore data:', err);
+        res.status(500).json({ error: 'Failed to fetch match statistics' });
+    }
 });
+
+app.get('/count', (req, res) => {
+    res.json({ count: reqCount });
+}); 
+
+app.listen(port, host, () => console.log(`Proxy listening on ${host}:${port}`));
