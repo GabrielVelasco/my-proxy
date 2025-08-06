@@ -1,19 +1,22 @@
 {
-  "name": "my-proxy",
+  "name": "sofascore-proxy",
   "version": "1.0.0",
-  "description": "Proxy to attack momentum app",
-  "main": "index.js",
+  "description": "Proxy server to bypass CORS for SofaScore API",
+  "main": "poop.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node poop.js",
+    "dev": "nodemon poop.js"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "axios": "^0.27.2",
     "cors": "^2.8.5",
-    "express": "^4.18.1"
+    "express": "^4.18.2",
+    "puppeteer": "^21.0.0"
   },
-  "engines": {
-    "node": ">=0.10.0"
-  }
+  "keywords": [
+    "proxy",
+    "cors",
+    "sofascore"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
 }
