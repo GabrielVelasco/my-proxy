@@ -14,7 +14,19 @@ app.use(cors());
 let browserPromise, reqCount = 0;
 
 (async () => {
-    browserPromise = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+    browserPromise = await puppeteer.launch({ 
+        headless: true, 
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',
+            '--disable-gpu'
+        ]
+    });
 })();
 
 app.get('/live-events', async (req, res) => {
