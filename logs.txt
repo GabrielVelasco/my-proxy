@@ -1,0 +1,15 @@
+
+> sofascore-proxy@1.0.0 start
+> node poop.js
+
+Proxy listening on 0.0.0.0:8080
+
+> sofascore-proxy@1.0.0 start
+> node poop.js
+
+Proxy listening on 0.0.0.0:8080
+
+> sofascore-proxy@1.0.0 start
+> node poop.js
+
+Proxy listening on 0.0.0.0:8080

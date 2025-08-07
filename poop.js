@@ -13,10 +13,14 @@ app.use(cors());
 let browserPromise, reqCount = 0;
 
 (async () => {
-    browserPromise = await puppeteer.launch({ 
-        headless: true, 
+    browserPromise = await puppeteer.launch({
+        headless: true,
         args: [
-            '--no-sandbox'
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--disable-gpu'
         ]
     });
 })();
@@ -30,7 +34,10 @@ app.get('/live-events', async (req, res) => {
 
         // Navigate to the SofaScore live events API endpoint
         const response = await page.goto(
-            'https://www.sofascore.com/api/v1/sport/football/events/live'
+            'https://www.sofascore.com/api/v1/sport/football/events/live',
+            {
+                timeout: 60000
+            }
         );
 
         // Parse the JSON response
@@ -55,7 +62,10 @@ app.get('/live-stats/:matchID', async (req, res) => {
 
         // Navigate to the SofaScore live stats API endpoint
         const response = await page.goto(
-            `https://www.sofascore.com/api/v1/event/${matchID}/statistics`
+            `https://www.sofascore.com/api/v1/event/${matchID}/statistics`,
+            {
+                timeout: 60000
+            }
         );
 
         // Parse the JSON response
@@ -73,6 +83,6 @@ app.get('/live-stats/:matchID', async (req, res) => {
 
 app.get('/count', (req, res) => {
     res.json({ count: reqCount });
-}); 
+});
 
 app.listen(port, host, () => console.log(`Proxy listening on ${host}:${port}`));

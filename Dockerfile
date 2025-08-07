@@ -1,43 +1,41 @@
-# Use Node.js 18 with Alpine Linux as the base image
-FROM node:18-alpine
+# Use an official Node.js runtime as a parent image
+FROM node:20
 
-# Install Chrome dependencies and Chrome itself
-RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    freetype-dev \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont \
-    && rm -rf /var/cache/apk/*
-
-# Set environment variables for Puppeteer to use the installed Chromium
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
-    PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-
-# Create app directory
+# Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json (if available)
+# Install dependencies for Puppeteer and Google Chrome
+RUN apt-get update \
+    && apt-get install -y wget gnupg ca-certificates \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set environment variables to tell Puppeteer to use the installed Chrome
+# and to not download its own version of Chromium.
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+    PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+
+# Create a non-root user for security purposes.
+RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
+    && mkdir -p /home/pptruser/Downloads \
+    && chown -R pptruser:pptruser /home/pptruser \
+    && chown -R pptruser:pptruser /usr/src/app
+
+# Copy package.json and package-lock.json to leverage Docker cache
 COPY package*.json ./
 
 # Install app dependencies
-RUN npm ci --only=production && npm cache clean --force
+RUN npm install
 
-# Copy app source code
+# Copy the rest of your application's source code
 COPY . .
 
-# Create a non-root user to run the app (security best practice)
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nextjs -u 1001
+# Switch to the non-root user
+USER pptruser
 
-# Change ownership of the app directory to the nodejs user
-RUN chown -R nextjs:nodejs /usr/src/app
-USER nextjs
-
-# Expose the port the app runs on
-EXPOSE 8080
-
-# Define the command to run the app
-CMD ["npm", "start"]
+# Define the command to run your app
+CMD [ "node", "poop.js" ]
