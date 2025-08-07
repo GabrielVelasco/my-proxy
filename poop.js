@@ -14,6 +14,9 @@ let browser, reqCount = 0;
 
 async function startServer() {
     try {
+
+        // using .launch() and then .listen() inside a try catch to ensure that the *server starts only after Puppeteer is ready...* 
+        // (solved the issue of the server starting before Puppeteer was ready, causing 'browser is not defined' errors)
         browser = await puppeteer.launch({
             headless: true,
             args: [
@@ -51,7 +54,7 @@ app.get('/live-events', async (req, res) => {
         const response = await page.goto(
             'https://www.sofascore.com/api/v1/sport/football/events/live',
             {
-                waitUntil: 'networkidle2',
+                // waitUntil: 'networkidle2',
                 timeout: 60000
             }
         );
@@ -84,7 +87,7 @@ app.get('/live-stats/:matchID', async (req, res) => {
         const response = await page.goto(
             `https://www.sofascore.com/api/v1/event/${matchID}/statistics`,
             {
-                waitUntil: 'networkidle2',
+                // waitUntil: 'networkidle2',
                 timeout: 60000
             }
         );
