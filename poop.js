@@ -55,7 +55,7 @@ app.get('/live-events', async (req, res) => {
             'https://www.sofascore.com/api/v1/sport/football/events/live',
             {
                 // waitUntil: 'networkidle2',
-                timeout: 180000
+                timeout: 1000 * 60 * 3 
             }
         );
 
@@ -87,7 +87,7 @@ app.get('/live-stats/:matchID', async (req, res) => {
         const response = await page.goto(
             `https://www.sofascore.com/api/v1/event/${matchID}/statistics`,
             {
-                waitUntil: 'networkidle2',
+                // waitUntil: 'networkidle2',
                 timeout: 1000 * 60 * 3 
             }
         );
