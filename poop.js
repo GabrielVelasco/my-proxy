@@ -65,7 +65,7 @@ const validateReferer = (req, res, next) => {
     // array of suspicious user agents patterns
     const suspiciousUserAgents = [
         /bot/i, /crawler/i, /spider/i, /scraper/i, 
-        /curl/i, /wget/i, /python/i, /java/i
+        /curl/i, /wget/i, /python/i, /java/i, /node/i,
     ];
     
     // see if 'user agent' fits one of the patterns
