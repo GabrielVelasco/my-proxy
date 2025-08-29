@@ -44,10 +44,17 @@ app.use(cors());
 //     next();
 // };
 
-// Middleware to validate referer with more strict checking
+// middleware rule to validate where the request is coming from...
 const validateReferer = (req, res, next) => {
-    const referer = req.get('Referer') || req.get('Origin');
+    const origin = req.get('Origin'); // 'referer' holds the entire URL, while 'origin' holds the base URL
     const userAgent = req.get('User-Agent') || '';
+
+    // Check if referer/origin exists and is from allowed domain
+    if (!origin || !req.get('Referer')) {
+        return res.status(403).json({ 
+            error: 'Access denied' 
+        });
+    }
     
     const allowedDomains = [
         'https://gabrielvelasco.github.io',
@@ -55,38 +62,29 @@ const validateReferer = (req, res, next) => {
         'http://127.0.0.1'   // for local development
     ];
 
-    // Block requests with suspicious user agents (bots, scrapers)
+    // array of suspicious user agents patterns
     const suspiciousUserAgents = [
         /bot/i, /crawler/i, /spider/i, /scraper/i, 
         /curl/i, /wget/i, /python/i, /java/i
     ];
     
+    // see if 'user agent' fits one of the patterns
     if (suspiciousUserAgents.some(pattern => pattern.test(userAgent))) {
-        console.log(`Request blocked: Suspicious user agent - ${userAgent}`);
         return res.status(403).json({ 
-            error: 'Access denied: Suspicious user agent' 
+            error: 'Access denied' 
         });
     }
 
-    // Check if referer exists and is from allowed domain
-    if (!referer) {
-        console.log(`Request blocked: No referer header. IP: ${req.ip}, UA: ${userAgent}`);
-        return res.status(403).json({ 
-            error: 'Access denied: No referer header found' 
-        });
-    }
+    // check if 'domain' is a substr of 'origin'
+    const isAllowed = allowedDomains.some(domain => origin.startsWith(domain));
 
-    const isAllowed = allowedDomains.some(domain => referer.startsWith(domain));
-    
     if (!isAllowed) {
-        console.log(`Request blocked: Unauthorized referer - ${referer}. IP: ${req.ip}, UA: ${userAgent}`);
         return res.status(403).json({ 
-            error: 'Access denied: Unauthorized domain',
-            referer: referer 
+            error: 'Access denied'
         });
     }
 
-    //console.log(`Request allowed from: ${referer} | IP: ${req.ip}`);
+    // valid request, proceed...
     next();
 };
 
