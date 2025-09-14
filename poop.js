@@ -57,9 +57,7 @@ const validateReferer = (req, res, next) => {
     }
     
     const allowedDomains = [
-        'https://gabrielvelasco.github.io',
-        'http://localhost',  // for local development
-        'http://127.0.0.1'   // for local development
+        'https://gabrielvelasco.github.io'
     ];
 
     // array of suspicious user agents patterns
